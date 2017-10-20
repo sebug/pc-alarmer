@@ -7,7 +7,7 @@ async function getRecipientLists() {
 }
 
 function loadRecipientLists() {
-    return getRecipientLists().then(function (recpientLists) {
+    return getRecipientLists().then(function (recipientLists) {
 	console.log(recipientLists);
     });
 }
