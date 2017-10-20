@@ -37,9 +37,6 @@ function getRecipientListByCode(log, authorizedRecipientLists, code, callback) {
     let tableService = azureStorage.createTableService(connectionString);
 
     tableService.createTableIfNotExists('recipientLists', function () {
-        var baseQuery = new azureStorage.TableQuery()
-            .top(100);
-        var query = baseQuery;
         var isAuthorized = authorizedRecipientLists.filter(function (rl) {
             return rl.RecipientList === 'Any' || rl.RecipientList === code;
         }).length > 0;
@@ -156,7 +153,7 @@ module.exports = function (context, req) {
 		    context.log(apiKey.Value);
 		    getRecipients(code, context.log, function (recipients) {
 			for (let recipient of recipients) {
-			    sendMessage(context.log, apiKey, 'A friendly sender', message, recipient.Number);
+			    sendMessage(context.log, apiKey.Value, 'A friendly sender', message, recipient.Number);
 			}
 			context.res = {
 			    body: recipients
