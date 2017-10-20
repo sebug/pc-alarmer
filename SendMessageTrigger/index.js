@@ -91,7 +91,7 @@ module.exports = function (context, req) {
     getAuthorizedRecipientLists(userID, context.log, function (authorizedRecipientLists) {
         getRecipientListByCode(context.log, authorizedRecipientLists, code, function (recipientList) {
 	    context.log('Got recipient list ' + JSON.stringify(recipientList));
-	    getSMSApiKey(userID, log, function (apiKey) {
+	    getSMSApiKey(userID, context.log, function (apiKey) {
 		if (!apiKey) {
 		    context.log('No API key found');
 		} else {
