@@ -51,10 +51,32 @@ function getRecipientListByCode(log, authorizedRecipientLists, code, callback) {
 		    log(JSON.stringify(error));
 		    callback(null);
 		} else {
-		    callback(result);
+		    callback({
+			Code: result.RowKey._,
+			Name: result.Name._
+		    });
 		}
 	    });
 	}
+    });
+}
+
+function getSMSApiKey(userID, log, callback) {
+    let connectionString = process.env.AzureWebJobsStorage;
+    let tableService = azureStorage.createTableService(connectionString);
+
+    tableService.createTableIfNotExists('apiKeys', function () {
+	tableService.retrieveEntity('apiKeys', 'prod', userID, function (error, result) {
+	    if (error) {
+		log(JSON.stringify(error));
+		callback(null);
+	    } else {
+		callback({
+		    UserID: result.RowKey._,
+		    Value: result.Value && result.Value._
+		});
+	    }
+	});
     });
 }
 
@@ -68,10 +90,18 @@ module.exports = function (context, req) {
 
     getAuthorizedRecipientLists(userID, context.log, function (authorizedRecipientLists) {
         getRecipientListByCode(context.log, authorizedRecipientLists, code, function (recipientList) {
-            context.res = {
-                body: recipientList
-            };
-            context.done();
+	    context.log('Got recipient list ' + JSON.stringify(recipientList));
+	    getSMSApiKey(userID, log, function (apiKey) {
+		if (!apiKey) {
+		    context.log('No API key found');
+		} else {
+		    context.log(apiKey.Value);
+		}
+		context.res = {
+                    body: recipientList
+		};
+		context.done();
+	    });
         });
     });
 };
