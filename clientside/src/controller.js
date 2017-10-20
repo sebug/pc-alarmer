@@ -3,12 +3,17 @@ async function getRecipientLists() {
     var res = await fetch('/api/GetRecipientListsTrigger', {
 	credentials: 'include'
     });
-    return res.json;
+    return res.json();
 }
 
 function loadRecipientLists() {
     return getRecipientLists().then(function (recipientLists) {
-	console.log(recipientLists);
+	if (recipientLists) {
+	    for (const recipientList of recipientLists) {
+		$('.recipients-dropdown .menu').append('<div class="item" data-value="' + recipientList.Code + '">' + recipientList.Name + '</div>');
+	    }
+	}
+	$('.recipients-dropdown').dropdown();
     });
 }
 
