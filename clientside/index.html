@@ -2,8 +2,30 @@
 <html>
   <head>
     <title>PC Alarmer</title>
+    <script src="static/polyfill.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+    <script>
+      require.config({
+      paths: {
+      "main": "static/dist"
+      }
+      });
+      require(["main"]);
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.2.13/dist/semantic.min.js"></script>
   </head>
   <body>
-    <h1>PC Alarmer</h1>
+    <div class="main-content">
+      <h1 class="ui heading">PC Alarmer</h1>
+      <form class="ui form">
+	<div class="field">
+	  <label>Message</label>
+	  <textarea name="message" id="message"></textarea>
+	</div>
+	<button class="ui blue button send-message">Envoyer</button>
+      </form>
+    </div>
   </body>
 </html>
