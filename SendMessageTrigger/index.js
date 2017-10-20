@@ -105,6 +105,33 @@ function getRecipients(code, log, callback) {
     });
 }
 
+function sendMessage(log, apiKey, sender, message, number) {
+    const payload = {
+        from: sender,
+        to: number.replace(/ /g, ''),
+        text: message
+    };
+    const options = {
+        uri: 'https://api.swisscom.com/messaging/sms',
+        headers: {
+            client_id: apiKey,
+            'Content-Type': 'application/json',
+            'SCS-Version': '2'
+        },
+        body: JSON.stringify(payload),
+        method: 'POST'
+    };
+    request(options, function (err, res, body) {
+        if (err) {
+            log(JSON.stringify(err));
+        }
+        if (body) {
+            log(body);
+        }
+    });
+}
+
+
 module.exports = function (context, req) {
     context.log('Get recipient lists entry');
     var userID = req.headers['x-ms-client-principal-id'];
@@ -112,6 +139,7 @@ module.exports = function (context, req) {
 
     var code = req.body.code;
     context.log('Code is ' + code);
+    var message = req.body.message;
 
     getAuthorizedRecipientLists(userID, context.log, function (authorizedRecipientLists) {
         getRecipientListByCode(context.log, authorizedRecipientLists, code, function (recipientList) {
@@ -127,6 +155,9 @@ module.exports = function (context, req) {
 		} else {
 		    context.log(apiKey.Value);
 		    getRecipients(code, context.log, function (recipients) {
+			for (let recipient of recipients) {
+			    sendMessage(context.log, apiKey, 'A friendly sender', message, recipient.Number);
+			}
 			context.res = {
 			    body: recipients
 			};
