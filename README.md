@@ -12,6 +12,6 @@ Again, set up continuous deployment from the Azure function deployment options a
 	az storage blob upload --container-name pcalarmerstatic --file clientside/index.html --name index.html --content-type "text/html"
 	az storage container set-permission --name pcalarmerstatic --public-access blob
 	az storage blob upload --container-name pcalarmerstatic --file clientside/dist.js --name dist.js --content-type "application/javascript"
-	az storage blob upload --container-name pcalarmerstatic --file clientside/polyfill.min.js --name polyfill.js --content-type "application/javascript"
+	az storage blob upload --container-name pcalarmerstatic --file clientside/polyfill.min.js --name polyfill.min.js --content-type "application/javascript"
 
 
