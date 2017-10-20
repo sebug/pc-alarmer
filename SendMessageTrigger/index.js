@@ -80,6 +80,31 @@ function getSMSApiKey(userID, log, callback) {
     });
 }
 
+function getRecipients(code, log, callback) {
+    let connectionString = process.env.AzureWebJobsStorage;
+    let tableService = azureStorage.createTableService(connectionString);
+
+    tableService.createTableIfNotExists('recipients', function () {
+	var query = new azureStorage.TableQuery()
+	    .top(100)
+	    .where('PartitionKey eq ?', code);
+	tableService.queryEntities('recipients', query, null, function (error, result, response) {
+	    if (error) {
+		log(JSON.stringify(error));
+		callback([]);
+	    } else {
+		log('Found entries!');
+		callback(result.entries.map(function (r) {
+		    return {
+			Code: r.PartitionKey._,
+			Number: r.RowKey._
+		    };
+		}));
+	    }
+	});
+    });
+}
+
 module.exports = function (context, req) {
     context.log('Get recipient lists entry');
     var userID = req.headers['x-ms-client-principal-id'];
@@ -94,13 +119,20 @@ module.exports = function (context, req) {
 	    getSMSApiKey(userID, context.log, function (apiKey) {
 		if (!apiKey) {
 		    context.log('No API key found');
+		    context.res = {
+			status: 500,
+			body: 'No API key found'
+		    };
+		    context.done();
 		} else {
 		    context.log(apiKey.Value);
+		    getRecipients(code, context.log, function (recipients) {
+			context.res = {
+			    body: recipients
+			};
+			context.done();
+		    });
 		}
-		context.res = {
-                    body: recipientList
-		};
-		context.done();
 	    });
         });
     });
