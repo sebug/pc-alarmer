@@ -1,0 +1,15 @@
+{
+  "name": "pc-alarmer",
+  "version": "1.0.0",
+  "description": "A page that allows to send SMS to many people.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sms",
+    "send"
+  ],
+  "author": "Sebastian Gfeller",
+  "license": "GPL-3.0"
+}
